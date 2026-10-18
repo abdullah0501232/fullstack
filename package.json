@@ -1,0 +1,16 @@
+{
+  "name": "lab07",
+  "version": "1.0.0",
+  "description": "CS-301L Lab 07 — Modules, File I/O, and Express REST API",
+  "main": "courses-server.js",
+  "scripts": {
+    "start": "node courses-server.js",
+    "start:courses": "node courses-server.js",
+    "task1": "node task1.js",
+    "task2": "node task2.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
+

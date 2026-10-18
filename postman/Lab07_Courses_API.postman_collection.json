@@ -1,0 +1,487 @@
+{
+  "info": {
+    "name": "Lab 07 Tasks",
+    "_postman_id": "lab07-courses-api-collection",
+    "description": "CS-301L Lab 07 — Courses REST API test suite",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "newCourseCode",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Courses API",
+      "item": [
+        {
+          "name": "1. GET all courses (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is an array', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.be.an('array');",
+                  "  pm.expect(body.length).to.be.at.least(1);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/courses"
+          }
+        },
+        {
+          "name": "2. GET courses filtered by department (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('All results are Data Science', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.be.an('array');",
+                  "  body.forEach(c => {",
+                  "    pm.expect(c.department).to.equal('Data Science');",
+                  "  });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses?department=Data Science",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses"],
+              "query": [{ "key": "department", "value": "Data Science" }]
+            }
+          }
+        },
+        {
+          "name": "3. GET courses filter + sort desc (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Sorted by creditHours descending', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.be.an('array');",
+                  "  for (let i = 1; i < body.length; i++) {",
+                  "    pm.expect(body[i].creditHours).to.be.at.most(body[i-1].creditHours);",
+                  "  }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses?department=Data Science&sort=creditHours&order=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses"],
+              "query": [
+                { "key": "department", "value": "Data Science" },
+                { "key": "sort", "value": "creditHours" },
+                { "key": "order", "value": "desc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "4. GET courses search by keyword (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Results contain search term', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.be.an('array');",
+                  "  body.forEach(c => {",
+                  "    const match = c.title.toLowerCase().includes('web') || c.code.toLowerCase().includes('web');",
+                  "    pm.expect(match).to.be.true;",
+                  "  });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/courses?search=web",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses"],
+              "query": [{ "key": "search", "value": "web" }]
+            }
+          }
+        },
+        {
+          "name": "5. GET statistics (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Stats has required fields', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('totalCourses');",
+                  "  pm.expect(body).to.have.property('totalCreditHours');",
+                  "  pm.expect(body).to.have.property('averageCreditHours');",
+                  "  pm.expect(body).to.have.property('mostCredits');",
+                  "  pm.expect(body.totalCourses).to.be.a('number').and.to.be.at.least(1);",
+                  "  pm.expect(body.mostCredits).to.have.property('code');",
+                  "  pm.expect(body.mostCredits).to.have.property('title');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/courses/stats"
+          }
+        },
+        {
+          "name": "6. GET one course (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Course has correct code', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.code).to.equal('CS-301');",
+                  "  pm.expect(body).to.have.property('title');",
+                  "  pm.expect(body).to.have.property('creditHours');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/courses/CS-301"
+          }
+        },
+        {
+          "name": "7. GET unknown course — 404 (negative)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', () => {",
+                  "  pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('Error message present', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('error');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/courses/CS-999"
+          }
+        },
+        {
+          "name": "8. POST create course (201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', () => {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Response has Location header', () => {",
+                  "  pm.expect(pm.response.headers.get('Location')).to.match(/^\\/api\\/courses\\//);",
+                  "});",
+                  "pm.test('Created course body is correct', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.code).to.equal('CS-500');",
+                  "  pm.expect(body.title).to.equal('Advanced Node.js');",
+                  "  pm.collectionVariables.set('newCourseCode', body.code);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/courses",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"CS-500\",\n  \"title\": \"Advanced Node.js\",\n  \"creditHours\": 3,\n  \"instructor\": \"Dr. Test Prof\",\n  \"department\": \"Computer Science\"\n}"
+            }
+          }
+        },
+        {
+          "name": "9. POST duplicate course — 409 (negative)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 409', () => {",
+                  "  pm.response.to.have.status(409);",
+                  "});",
+                  "pm.test('Conflict error message present', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.error).to.include('already exists');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/courses",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"CS-500\",\n  \"title\": \"Advanced Node.js\",\n  \"creditHours\": 3,\n  \"instructor\": \"Dr. Test Prof\",\n  \"department\": \"Computer Science\"\n}"
+            }
+          }
+        },
+        {
+          "name": "10. POST invalid data — 400 (negative)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', () => {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Validation details array present', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.error).to.equal('Validation failed');",
+                  "  pm.expect(body.details).to.be.an('array').with.length.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/courses",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"CS3\",\n  \"title\": \"AI\",\n  \"creditHours\": 9\n}"
+            }
+          }
+        },
+        {
+          "name": "11. POST malformed JSON — 400 (negative)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', () => {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Error message for malformed JSON', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('error');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/courses",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{bad json here"
+            }
+          }
+        },
+        {
+          "name": "12. PUT full update of new course (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Title was updated', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.title).to.equal('Advanced Node.js Updated');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/courses/{{newCourseCode}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"CS-500\",\n  \"title\": \"Advanced Node.js Updated\",\n  \"creditHours\": 4,\n  \"instructor\": \"Dr. Test Prof\",\n  \"department\": \"Computer Science\"\n}"
+            }
+          }
+        },
+        {
+          "name": "13. PATCH partial update (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('creditHours was patched', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.creditHours).to.equal(2);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/courses/{{newCourseCode}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"creditHours\": 2\n}"
+            }
+          }
+        },
+        {
+          "name": "14. PATCH invalid field value — 400 (negative)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', () => {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Validation details present', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.details).to.be.an('array').with.length.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/courses/{{newCourseCode}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"creditHours\": 99\n}"
+            }
+          }
+        },
+        {
+          "name": "15. DELETE created course (204)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 204', () => {",
+                  "  pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/courses/{{newCourseCode}}"
+          }
+        },
+        {
+          "name": "16. GET deleted course — 404 (negative)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', () => {",
+                  "  pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('Error message present after delete', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('error');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/courses/{{newCourseCode}}"
+          }
+        }
+      ]
+    }
+  ]
+}
+

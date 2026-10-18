@@ -1,0 +1,51 @@
+[
+  {
+    "code": "CS-301",
+    "title": "Full Stack Web Development",
+    "creditHours": 3,
+    "instructor": "Dr. Ahmad Ali",
+    "department": "Computer Science"
+  },
+  {
+    "code": "CS-301L",
+    "title": "Full Stack Web Development Lab",
+    "creditHours": 1,
+    "instructor": "Mr. Kamran Shah",
+    "department": "Computer Science"
+  },
+  {
+    "code": "CS-201",
+    "title": "Data Structures and Algorithms",
+    "creditHours": 3,
+    "instructor": "Dr. Nadia Hussain",
+    "department": "Computer Science"
+  },
+  {
+    "code": "CS-410",
+    "title": "Machine Learning",
+    "creditHours": 3,
+    "instructor": "Dr. Hamza Rauf",
+    "department": "Data Science"
+  },
+  {
+    "code": "CS-215",
+    "title": "Data Analysis",
+    "creditHours": 2,
+    "instructor": "Ms. Iqra Shah",
+    "department": "Data Science"
+  },
+  {
+    "code": "CS-320",
+    "title": "Software Engineering Principles",
+    "creditHours": 3,
+    "instructor": "Prof. Tariq Mehmood",
+    "department": "Software Engineering"
+  },
+  {
+    "code": "CS-405",
+    "title": "Cloud Computing",
+    "creditHours": 4,
+    "instructor": "Dr. Sana Butt",
+    "department": "Computer Science"
+  }
+]
